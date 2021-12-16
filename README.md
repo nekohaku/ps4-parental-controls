@@ -1,9 +1,9 @@
-Fan Threshold
+Parental Controls
 ===
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/)](https://www.codacy.com/gh/Scene-Collective/ps4-fan-threshold/dashboard)
 
 ## Synopsis
-Sets the temperature threshold where the fan will kick into turbo.
+Shows the current set Parental Controls passcode in a notification.
 
 For the payloads built with the most recent firmware supported visit [this repo].
 

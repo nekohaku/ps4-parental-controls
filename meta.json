@@ -1,15 +1,15 @@
 {
-  "title": "Fan Threshold",
+  "title": "Parental Controls",
   "version": "1.0.0",
   "updated": "2021-01-01T00:00:00Z",
   "device": "PlayStation 4",
   "firmware": "",
   "description": {
-    "default": "Sets the temperature threshold where the fan will kick into turbo.",
-    "en": "Sets the temperature threshold where the fan will kick into turbo."
+    "default": "Shows the current set Parental Controls passcode in a notification.",
+    "en": "Shows the current set Parental Controls passcode in a notification."
   },
   "author": "",
-  "url": "https://github.com/Scene-Collective/ps4-fan-threshold",
+  "url": "https://github.com/nekohaku/ps4-parental-controls",
   "redirect": false,
   "reload": false,
   "offline": true

@@ -1,12 +1,43 @@
-//#define DEBUG_SOCKET
-#define DEBUG_IP "192.168.2.2"
-#define DEBUG_PORT 9023
+#define DEBUG_SOCKET
+#define DEBUG_IP "192.168.1.218"
+#define DEBUG_PORT 19023
+
 
 #include "ps4.h"
 
-uint8_t THRESHOLDTEMP = 60;
+int libRegMgrHandle;
+
+/* https://github.com/oct0xor/ps4_registry_editor/blob/master/Ps4EditLib/PsRegistry/Preferences.cs#L133 */
+#define SECURITY_PARENTAL_PASSCODE (0x03800800)
+
+int(*sceRegMgrGetInt)(int optionId, int* outInt);
+int(*sceRegMgrSetInt)(int optionId, int inInt);
+int(*sceRegMgrGetStr)(int optionId, char* outString, size_t stringLength);
+int(*sceRegMgrSetStr)(int optionId, const char* inStirng, size_t stringLength);
+int(*sceRegMgrGetBin)(int optionId, void* outData, size_t dataLength);
+int(*sceRegMgrSetBin)(int optionId, const void* inData, size_t dataLength);
+
+int initRegMgr() {
+  if (libRegMgrHandle) {
+    return 1;
+  }
+  
+  if (!loadModule("libSceRegMgr.sprx", &libRegMgrHandle)) {
+    return 0;
+  }
+  
+  RESOLVE(libRegMgrHandle, sceRegMgrGetInt);
+  RESOLVE(libRegMgrHandle, sceRegMgrSetInt);
+  RESOLVE(libRegMgrHandle, sceRegMgrGetStr);
+  RESOLVE(libRegMgrHandle, sceRegMgrSetStr);
+  RESOLVE(libRegMgrHandle, sceRegMgrGetBin);
+  RESOLVE(libRegMgrHandle, sceRegMgrSetBin);
+  
+  return 1;
+}
 
 int _main(struct thread *td) {
+  char buff[32] = { '\0' };
   UNUSED(td);
 
   initKernel();
@@ -21,18 +52,14 @@ int _main(struct thread *td) {
 
   initSysUtil();
 
-  int fd = open("/dev/icc_fan", O_RDONLY, 0);
-  if (fd <= 0) {
-    printf_notification("Unable to Open Fan Settings!");
-    return 0;
+  // the fun happens here:
+  if (!initRegMgr()) {
+    printf_notification("Failed to resolve RegMgr.");
   }
-
-  char data[10] = {0x00, 0x00, 0x00, 0x00, 0x00, THRESHOLDTEMP, 0x00, 0x00, 0x00, 0x00};
-  ioctl(fd, 0xC01C8F07, data);
-  close(fd);
-
-  float fahrenheit = ((THRESHOLDTEMP * 9) / 5) + 32;
-  printf_notification("Fan Threshold Set to %i°C/%i°F!", THRESHOLDTEMP, (int)fahrenheit);
+  else {
+    sceRegMgrGetStr(SECURITY_PARENTAL_PASSCODE, buff, sizeof(buff) - 1);
+	printf_notification("nya, passcode='%s'.", buff);
+  }
 
 #ifdef DEBUG_SOCKET
   printf_debug("Closing socket...\n");
