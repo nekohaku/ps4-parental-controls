@@ -22,8 +22,9 @@ int initRegMgr() {
     return 1;
   }
   
-  if (!loadModule("libSceRegMgr.sprx", &libRegMgrHandle)) {
-    return 0;
+  libRegMgrHandle = sceKernelLoadStartModule("libSceRegMgr.sprx", 0, 0, 0, NULL, NULL);
+  if (libRegMgrHandle < 0) {
+    return libRegMgrHandle;
   }
   
   RESOLVE(libRegMgrHandle, sceRegMgrGetInt);
@@ -51,10 +52,11 @@ int _main(struct thread *td) {
   jailbreak();
 
   initSysUtil();
+  initModule();
 
   // the fun happens here:
-  if (!initRegMgr()) {
-    printf_notification("Failed to resolve RegMgr.");
+  if (initRegMgr() < 0) {
+    printf_notification("Failed to resolve RegMgr=%X", libRegMgrHandle);
   }
   else {
     sceRegMgrGetStr(SECURITY_PARENTAL_PASSCODE, buff, sizeof(buff) - 1);
