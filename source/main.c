@@ -1,7 +1,6 @@
-#define DEBUG_SOCKET
+//#define DEBUG_SOCKET
 #define DEBUG_IP "192.168.1.218"
 #define DEBUG_PORT 19023
-
 
 #include "ps4.h"
 
@@ -17,6 +16,8 @@ int(*sceRegMgrSetStr)(int optionId, const char* inStirng, size_t stringLength);
 int(*sceRegMgrGetBin)(int optionId, void* outData, size_t dataLength);
 int(*sceRegMgrSetBin)(int optionId, const void* inData, size_t dataLength);
 
+/* for some reason there are no RegMgr definitions in the Scene Collective payload SDK */
+/* luckily, we can take the headers from the orbisdev repo and use typical RESOLVE stuff */
 int initRegMgr() {
   if (libRegMgrHandle) {
     return 1;
