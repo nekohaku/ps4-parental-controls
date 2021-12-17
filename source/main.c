@@ -57,11 +57,11 @@ int _main(struct thread *td) {
 
   // the fun happens here:
   if (initRegMgr() < 0) {
-    printf_notification("Failed to resolve RegMgr=%X", libRegMgrHandle);
+    printf_notification("Failed to resolve RegMgr=0x%X.", libRegMgrHandle);
   }
   else {
     sceRegMgrGetStr(SECURITY_PARENTAL_PASSCODE, buff, sizeof(buff) - 1);
-	printf_notification("nya, passcode='%s'.", buff);
+    printf_notification("nya, passcode='%s'.", buff);
   }
 
 #ifdef DEBUG_SOCKET
